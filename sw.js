@@ -1,6 +1,14 @@
 self.addEventListener("install", function (event) {
-  console.log("install");
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    (async () => {
+      self.skipWaiting();
+      await include("index");
+
+      for (const client of await self.clients.matchAll()) {
+        client.postMessage("ready");
+      }
+    })()
+  );
 });
 
 self.addEventListener("activate", function (event) {
@@ -45,8 +53,3 @@ async function include() {
 include.moduleCache = {};
 
 // Load the bootstrapper file
-include("index").then(async () => {
-  for (const client of await self.clients.matchAll()) {
-    client.postMessage("ready");
-  }
-});

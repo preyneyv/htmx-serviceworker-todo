@@ -2,13 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <title>Cool App</title>
     <script>
-      if (!navigator.serviceWorker.controller) location.reload();
-      navigator.serviceWorker.register("/sw.js", {
-        scope: "/",
-      });
+      navigator.serviceWorker
+        .register("/sw.js", {
+          scope: " /",
+        })
+        .then(() => {
+          if (!navigator.serviceWorker.controller) location.reload();
+        });
     </script>
   </head>
 </html>
