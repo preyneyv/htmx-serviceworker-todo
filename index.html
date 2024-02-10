@@ -8,38 +8,19 @@
 
     <script>
       async function registerServiceWorker() {
-        try {
-          const registration = await navigator.serviceWorker.register(
-            "/sw.js",
-            {
-              scope: "/",
-            }
-          );
-          if (registration.installing) {
-            console.log("Service worker installing");
-          } else if (registration.waiting) {
-            console.log("Service worker waiting");
-          } else if (registration.active) {
-            console.log("Service worker active");
-          }
-        } catch (error) {
-          console.error("Couldnt register service worker", error);
-        }
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+          scope: "/",
+        });
+        registration.active.addEventListener("message", (m) => {
+          console.log(m);
+        });
       }
       registerServiceWorker();
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.active.postMessage(
-          JSON.stringify({
-            handler: "initialize",
-            data: { host: window.location.host },
-          })
-        );
-      });
     </script>
   </head>
   <body>
-    <button hx-post="/clicked" hx-swap="outerHTML">
+    <!-- <button hx-post="/clicked" hx-swap="outerHTML">
       HELLO IM A BUTTON PLS CLICK ME :D
-    </button>
+    </button> -->
   </body>
 </html>

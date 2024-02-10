@@ -1,5 +1,9 @@
 const { app, html } = await include("app");
 
+app.get("/", async () => {
+  return html`<h1>Hello World!</h1>`;
+});
+
 app.get("/wow", async () => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
 

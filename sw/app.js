@@ -145,6 +145,8 @@ class App {
       );
     });
 
+    console.log(url, matchingRoute, this.#routes);
+
     if (!matchingRoute) {
       // No matching route found, we defer to the browser.
       return;

@@ -1,12 +1,15 @@
 self.addEventListener("install", function (event) {
-  event.waitUntil(self.skipWaiting()); // Activate worker immediately
+  console.log("install");
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", function (event) {
-  event.waitUntil(self.clients.claim()); // Become available to all pages
+  console.log("activate");
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("fetch", (event) => {
+  console.log("fetch", event.request.url);
   const appModule = include.moduleCache["/sw/app.js"];
   if (!appModule) return;
   const { app } = appModule.exports;
@@ -42,4 +45,8 @@ async function include() {
 include.moduleCache = {};
 
 // Load the bootstrapper file
-include("index");
+include("index").then(async () => {
+  for (const client of await self.clients.matchAll()) {
+    client.postMessage("ready");
+  }
+});
