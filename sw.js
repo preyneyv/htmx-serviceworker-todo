@@ -6,19 +6,34 @@ function makeJSONResponse(data) {
   });
 }
 
-class AppRequest {
-  constructor() {}
+function makeHTMLResponse(html) {
+  return new Response(html, {
+    headers: {
+      "Content-Type": "text/html",
+    },
+  });
 }
 
 /**
  * @typedef {(req: AppRequest) => Promise<Response>} AppCallback
  * @typedef {{type: 'var' | 'path', part: string}} AppPathSegment
+ * @typedef {{ method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', path: AppPathSegment[], callback: AppCallback }} AppRoute
  */
+
+class AppRequest {
+  /**
+   *
+   * @param {URL} url
+   * @param {Request} request
+   * @param {} route
+   */
+  constructor(url, request, route) {}
+}
 
 class App {
   #isRegistered = false;
 
-  /** @type {AppPathSegment[]} */
+  /** @type {AppRoute[]} */
   #routes = [];
 
   constructor() {
@@ -97,29 +112,55 @@ class App {
    * @param {*} event
    */
   #handleRequest(event) {
-    const url = new URL(event.request.url);
+    /** @type {Request} */
+    const request = event.request;
+    const url = new URL(request.url);
     if (url.host !== this.host) {
       // I guess it just wasn't meant to be :(
       return;
     }
-    console.log(event.request, url);
-    event.respondWith(makeJSONResponse({ hello: "world" }));
+
+    const matchingRoute = this.#routes.find((route) => {
+      const segments = url.pathname.split("/");
+      return (
+        route.method === request.method &&
+        route.path.length === segments.length &&
+        route.path.every((segment, i) => {
+          if (segment.type === "var") {
+            return true;
+          } else {
+            return segments[i] === segment.part;
+          }
+        })
+      );
+    });
+    if (!matchingRoute) {
+      // No matching route found, we defer to the browser.
+      return;
+    }
+
+    event.respondWith(matchingRoute.callback(new AppRequest()));
   }
 
   /**
    * @param {string} host hostname of the active webpage
    */
   configure(host) {
-    if (this.#isRegistered) throw new Error("Tried to re-register app");
-
-    this.#isRegistered = true;
     this.host = host;
   }
 }
 
 const app = new App();
-app.get("/test", (req) => makeJSONResponse({ hello: "world" }));
-app.get("/test/:variable/wow", (req) => makeJSONResponse({ hello: "world" }));
+app.post("/clicked", () =>
+  makeHTMLResponse(
+    `<button hx-post="/clicked-2" hx-swap="outerHTML">Now click me</button>`
+  )
+);
+app.post("/clicked-2", () =>
+  makeHTMLResponse(
+    `<button hx-post="/clicked" hx-swap="outerHTML">ha got em</button>`
+  )
+);
 
 const messageHandlers = {
   /**

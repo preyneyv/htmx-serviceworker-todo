@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
     <script>
       async function registerServiceWorker() {
         try {
@@ -35,5 +37,9 @@
       });
     </script>
   </head>
-  <body></body>
+  <body>
+    <button hx-post="/clicked" hx-swap="outerHTML">
+      HELLO IM A BUTTON PLS CLICK ME :D
+    </button>
+  </body>
 </html>
