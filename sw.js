@@ -15,6 +15,15 @@ function makeHTMLResponse(html) {
 }
 
 /**
+ * Template tag to convert HTML into a Response object
+ * @param {string} value
+ * @returns {Response}
+ */
+function html(value) {
+  return makeHTMLResponse(value);
+}
+
+/**
  * @typedef {(req: AppRequest) => Promise<Response>} AppCallback
  * @typedef {{type: 'var' | 'path', part: string}} AppPathSegment
  * @typedef {{ method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', path: AppPathSegment[], callback: AppCallback }} AppRoute
@@ -29,10 +38,12 @@ class AppRequest {
    */
   constructor(url, request, route) {}
 }
-
+/**
+ * Minimal implementation of an API router (a la Hono, Express, etc.)
+ * Supports path parameters by prefixing the segment with a :
+ * Example: `/users/:id/profile`
+ */
 class App {
-  #isRegistered = false;
-
   /** @type {AppRoute[]} */
   #routes = [];
 
@@ -151,15 +162,17 @@ class App {
 }
 
 const app = new App();
-app.post("/clicked", () =>
-  makeHTMLResponse(
-    `<button hx-post="/clicked-2" hx-swap="outerHTML">Now click me</button>`
-  )
+app.post(
+  "/clicked",
+  () =>
+    html`<button hx-post="/clicked-2" hx-swap="outerHTML">Now click me</button>`
 );
-app.post("/clicked-2", () =>
-  makeHTMLResponse(
-    `<button hx-post="/clicked" hx-swap="outerHTML">ha got em</button>`
-  )
+app.post(
+  "/clicked-2",
+  () =>
+    html`<button hx-post="/clicked" hx-swap="outerHTML">
+      this is honestly kinda cool tbh
+    </button>`
 );
 
 const messageHandlers = {
@@ -168,7 +181,6 @@ const messageHandlers = {
    * @param {{ hostname: string }}
    */
   initialize({ host }) {
-    console.log("Initializing service worker", host);
     app.configure(host);
   },
 };
