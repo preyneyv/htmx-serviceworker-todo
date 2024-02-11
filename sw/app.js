@@ -58,6 +58,15 @@ class AppRequest {
       }
     });
   }
+
+  async body() {
+    const data = {};
+    const formData = await this.request.formData();
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    return data;
+  }
 }
 /**
  * Minimal implementation of an API router (a la Hono, Express, etc.)

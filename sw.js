@@ -47,7 +47,7 @@ self.addEventListener("fetch", (event) => {
   // }
 
   const appModule = include.moduleCache["/sw/app.js"];
-  if (!appModule) throw new Error("App was never loaded.");
+  if (!appModule) return;
 
   const { app } = appModule.exports;
   app.handleRequest(event);
@@ -80,6 +80,11 @@ async function include() {
 }
 
 include.moduleCache = {};
+include("index").then(async () => {
+  for (const client of await self.clients.matchAll()) {
+    client.postMessage("ready");
+  }
+});
 // include.webCache = [
 //   new Request("https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"),
 //   // new Request("https://cdn.tailwindcss.com/3.4.1", { mode: "no-cors" }),

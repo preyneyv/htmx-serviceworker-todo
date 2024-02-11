@@ -1,7 +1,10 @@
 const { app, html } = await include("app");
-const layout = await include("views/fragments/layout");
+const todos = await include("stores/todos");
 
-let count = 0;
+const layout = await include("fragments/layout");
+const todoList = await include("fragments/todoList");
+const todoItem = await include("fragments/todoItem");
+const todoItemEdit = await include("fragments/todoItemEdit");
 
 function button() {
   return html`<button hx-post="/click" hx-swap="outerHTML">${count}</button>`;
@@ -9,23 +12,41 @@ function button() {
 
 app.get("/", async () => {
   return layout({
-    title: "Offline HTMX Todo List",
-    children: html`
-      ${button()}
-      <div hx-get="/test" hx-trigger="load"></div>
-    `,
+    title: "Todo List",
+    children: html`${todoList(todos.getAll())}`,
   });
 });
 
-app.get("/test", async (req) => {
-  return html`is htmx? ${req.htmx}`;
+app.post("/todos", async (req) => {
+  const { task } = await req.body();
+  todos.create(task);
+
+  return todoList(todos.getAll());
 });
 
-app.post("/click", async () => {
-  count++;
-  return button();
+app.put("/todos/:id", async (req) => {
+  const { id } = req.params;
+  const body = await req.body();
+  const delta = {};
+
+  if (body.completed !== undefined) delta.completed = body.completed === "true";
+  if (body.task !== undefined) delta.task = body.task;
+
+  const todo = todos.update(id, delta);
+  console.log(todo, todos.getAll());
+
+  return todoItem(todo);
 });
 
-app.get("/things/:id", async (req) => {
-  return html`<h1>${req.params.id}</h1>`;
+app.get("/todos/:id/edit", async (req) => {
+  const { id } = req.params;
+  return todoItemEdit(todos.get(id));
+  // return "WOW";
+});
+
+app.delete("/todos/:id", async (req) => {
+  const { id } = req.params;
+  const deletedTodo = Boolean(todos.delete(id));
+  if (deletedTodo === null) return new Response(undefined, { status: 404 });
+  return html``;
 });
