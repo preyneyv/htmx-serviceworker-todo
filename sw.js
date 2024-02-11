@@ -13,7 +13,18 @@ self.addEventListener("install", function (event) {
 
 self.addEventListener("activate", function (event) {
   console.log("activate");
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    (async () => {
+      await self.clients.claim();
+      await include("index");
+
+      for (const client of await self.clients.matchAll()) {
+        client.postMessage("ready");
+      }
+      // console.log(event);
+      // event.source.postMessage("HELLO FIREND");
+    })()
+  );
 });
 
 self.addEventListener("fetch", (event) => {

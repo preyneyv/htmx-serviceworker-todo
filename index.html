@@ -8,9 +8,14 @@
         .register("/sw.js", {
           scope: " /",
         })
-        .then(() => {
-          if (!navigator.serviceWorker.controller) location.reload();
+        .then((registration) => {
+          if (registration.active && !navigator.serviceWorker.controller)
+            location.reload();
         });
+      navigator.serviceWorker.addEventListener("message", (m) => {
+        if (m.data === "ready" && !navigator.serviceWorker.controller)
+          location.reload();
+      });
     </script>
   </head>
 </html>
