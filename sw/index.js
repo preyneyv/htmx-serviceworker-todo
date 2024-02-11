@@ -1,23 +1,31 @@
 const { app, html } = await include("app");
+const layout = await include("views/fragments/layout");
+
+let count = 0;
+
+function button() {
+  return html`<button hx-post="/click" hx-swap="outerHTML">${count}</button>`;
+}
 
 app.get("/", async () => {
-  return html`<h1>Hello World!</h1>`;
+  return layout({
+    title: "Offline HTMX Todo List",
+    children: html`
+      ${button()}
+      <div hx-get="/test" hx-trigger="load"></div>
+    `,
+  });
 });
 
-app.get("/wow", async () => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return html`<h1>Hello World!</h1>`;
+app.get("/test", async (req) => {
+  return html`is htmx? ${req.htmx}`;
 });
-app.post(
-  "/clicked",
-  () =>
-    html`<button hx-post="/clicked-2" hx-swap="outerHTML">Now click me</button>`
-);
-app.post(
-  "/clicked-2",
-  () =>
-    html`<button hx-post="/clicked" hx-swap="outerHTML">
-      this is honestly kinda cool tbh
-    </button>`
-);
+
+app.post("/click", async () => {
+  count++;
+  return button();
+});
+
+app.get("/things/:id", async (req) => {
+  return html`<h1>${req.params.id}</h1>`;
+});

@@ -1,8 +1,12 @@
 self.addEventListener("install", function (event) {
+  self.skipWaiting();
   event.waitUntil(
     (async () => {
-      self.skipWaiting();
       await include("index");
+
+      // // Cache required files for offline use
+      // const cache = await caches.open("cache");
+      // await cache.addAll(include.webCache);
 
       for (const client of await self.clients.matchAll()) {
         client.postMessage("ready");
@@ -12,7 +16,6 @@ self.addEventListener("install", function (event) {
 });
 
 self.addEventListener("activate", function (event) {
-  console.log("activate");
   event.waitUntil(
     (async () => {
       await self.clients.claim();
@@ -21,16 +24,31 @@ self.addEventListener("activate", function (event) {
       for (const client of await self.clients.matchAll()) {
         client.postMessage("ready");
       }
-      // console.log(event);
-      // event.source.postMessage("HELLO FIREND");
     })()
   );
 });
 
 self.addEventListener("fetch", (event) => {
-  console.log("fetch", event.request.url);
+  // // Offline cache handler
+  // if (include.webCache.find((r) => r.url === event.request.url)) {
+  //   event.respondWith(
+  //     (async () => {
+  //       const match = await caches.match(event.request);
+  //       if (match) {
+  //         return match;
+  //       }
+  //       const res = await fetch(event.request);
+  //       const cache = await caches.open("cache");
+  //       cache.put(e.request, res.clone());
+  //       return res;
+  //     })()
+  //   );
+  //   return;
+  // }
+
   const appModule = include.moduleCache["/sw/app.js"];
-  if (!appModule) return;
+  if (!appModule) throw new Error("App was never loaded.");
+
   const { app } = appModule.exports;
   app.handleRequest(event);
 });
@@ -62,5 +80,7 @@ async function include() {
 }
 
 include.moduleCache = {};
-
-// Load the bootstrapper file
+// include.webCache = [
+//   new Request("https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"),
+//   // new Request("https://cdn.tailwindcss.com/3.4.1", { mode: "no-cors" }),
+// ];

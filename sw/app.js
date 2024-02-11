@@ -15,28 +15,49 @@ function makeHTMLResponse(html) {
 }
 
 /**
- * Template tag to convert HTML into a Response object
- * @param {string} value
- * @returns {Response}
+ * Template tag to convert HTML into a string
+ * This exists solely so my LSP gives me syntax highlighting.
+ * @param {string[]} strings
+ * @param {...*} keys
+ * @returns {string}
  */
-function html(value) {
-  return makeHTMLResponse(value);
+function html(strings, ...keys) {
+  return strings.flatMap((string, i) => [string, keys[i]]).join("");
 }
 
 /**
  * @typedef {(req: AppRequest) => Response | Promise<Response>} AppCallback
- * @typedef {{type: 'var' | 'path', part: string}} AppPathSegment
+ * @typedef {{ type: 'var' | 'path', part: string }} AppPathSegment
  * @typedef {{ method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', path: AppPathSegment[], callback: AppCallback }} AppRoute
  */
 
 class AppRequest {
   /**
-   *
+   * Convenience wrapper around the `Request` object.
    * @param {URL} url
    * @param {Request} request
-   * @param {} route
+   * @param {AppRoute} route
    */
-  constructor(url, request, route) {}
+  constructor(url, request, route) {
+    this.url = url;
+    this.request = request;
+    this.route = route;
+
+    this.htmx = request.headers.get("hx-request") === "true";
+
+    this.query = {};
+    url.searchParams.forEach((value, key) => {
+      this.query[key] = value;
+    });
+
+    this.params = {};
+    url.pathname.split("/").map((segment, i) => {
+      const part = route.path[i];
+      if (part.type === "var") {
+        this.params[part.part] = decodeURIComponent(segment);
+      }
+    });
+  }
 }
 /**
  * Minimal implementation of an API router (a la Hono, Express, etc.)
@@ -145,14 +166,24 @@ class App {
       );
     });
 
-    console.log(url, matchingRoute, this.#routes);
+    // console.log(url, matchingRoute, this.#routes);
 
     if (!matchingRoute) {
       // No matching route found, we defer to the browser.
       return;
     }
 
-    event.respondWith(matchingRoute.callback(new AppRequest()));
+    event.respondWith(
+      (async () => {
+        const res = await matchingRoute.callback(
+          new AppRequest(url, request, matchingRoute)
+        );
+        if (typeof res === "string") {
+          return makeHTMLResponse(res);
+        }
+        return res;
+      })()
+    );
   }
 }
 
