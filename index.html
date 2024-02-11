@@ -13,8 +13,7 @@
             location.reload();
         });
       navigator.serviceWorker.addEventListener("message", (m) => {
-        if (m.data === "ready" && !navigator.serviceWorker.controller)
-          location.reload();
+        if (m.data === "ready") location.reload();
       });
     </script>
   </head>
