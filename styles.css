@@ -4,7 +4,7 @@ body {
   animation: 2s test linear infinite;
   font-family: "Lexend Mega", sans-serif;
   margin: 0;
-  padding: 4em 0;
+  padding: 4em 2em;
   letter-spacing: -0.1em;
 }
 
@@ -145,6 +145,7 @@ header > h2 {
   outline: none;
   border: 0;
   padding: 8px 12px;
+  min-width: 0;
   background: hsl(44, 100%, 59%);
 }
 .add-todo input[type="text"]::placeholder {
@@ -172,4 +173,18 @@ footer a[href] {
 
 p {
   line-height: 1.6;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    padding: 1em;
+  }
+
+  header > h1 {
+    font-size: 48px;
+  }
+
+  .hero-links {
+    margin: 0 0 2em;
+  }
 }
