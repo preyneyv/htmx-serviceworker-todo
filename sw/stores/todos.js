@@ -55,10 +55,11 @@ class TodoStore {
   /**
    * @param {string} id
    * @param {Partial<Todo>} delta
-   * @returns {Todo}
+   * @returns {Todo | null}
    */
   update(id, delta) {
     const todo = this.todos.find((todo) => todo.id === id);
+    if (!todo) return null;
     Object.assign(todo, delta);
     return todo;
   }

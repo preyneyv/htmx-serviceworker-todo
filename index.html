@@ -2,19 +2,66 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Cool App</title>
+    <title>HATEOAS but Client-Side and Offline</title>
     <script>
       navigator.serviceWorker
         .register("/sw.js", {
           scope: " /",
         })
         .then((registration) => {
-          if (registration.active && !navigator.serviceWorker.controller)
-            location.reload();
+          if (registration.active) {
+            // location.reload();
+          }
+          if (registration.installing) {
+            registration.installing.addEventListener("statechange", (e) => {
+              if (e.target.state === "activated") {
+                // location.reload();
+              }
+            });
+          }
         });
-      navigator.serviceWorker.addEventListener("message", (m) => {
-        if (m.data === "ready") location.reload();
-      });
     </script>
+    <style>
+      #container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        gap: 16px;
+      }
+
+      #container > div {
+        width: 16px;
+        height: 16px;
+        background: hsl(44, 100%, 59%);
+        animation: 1s fade linear infinite;
+      }
+      #container > div:nth-child(3) {
+        animation-delay: -200ms;
+      }
+      #container > div:nth-child(2) {
+        animation-delay: -100ms;
+      }
+
+      @keyframes fade {
+        0% {
+          opacity: 0.2;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.2;
+        }
+      }
+    </style>
   </head>
+  <body>
+    <div id="container">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </body>
 </html>

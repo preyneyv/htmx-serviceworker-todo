@@ -1,30 +1,35 @@
-@import url("https://fonts.googleapis.com/css2?family=Climate+Crisis&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Climate+Crisis&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900");
 
 body {
-  /* background: hsl(199, 100%, 59%); */
   animation: 2s test linear infinite;
   font-family: "Lexend Mega", sans-serif;
   margin: 0;
   padding: 4em 0;
+  letter-spacing: -0.1em;
 }
 
 main {
-  max-width: 700px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
+a[href] {
+  color: inherit;
+  text-decoration: none;
+  --accent: #ddd;
+  background: var(--accent);
+}
+a[href]:hover {
+  --accent: hsl(44, 100%, 59%);
+}
+
 header {
-  /* font-family: "Climate Crisis", sans-serif; */
   background: white;
   border: 4px solid black;
-  /* border-top: 6px solid hsl(266, 100%, 59%);
-  border-left: 6px solid hsl(266, 100%, 59%);
-  box-shadow: 9px 9px 0 3px white; */
   padding: 8px 8px 4px;
-  /* padding: 8px 8px 0; */
-  margin-bottom: 3em;
 }
+
 header > h1 {
   text-transform: uppercase;
   font-weight: 900;
@@ -36,7 +41,11 @@ header > h1 {
 
 header > h2 {
   margin: 0 2px;
-  /* font-weight: 700; */
+}
+
+.hero-links {
+  text-align: right;
+  margin: 0 0 4em;
 }
 
 .todo-container h1 {
@@ -121,6 +130,9 @@ header > h2 {
   background: hsl(17, 100%, 59%);
 }
 
+.add-todo {
+  margin-top: 24px;
+}
 .add-todo form {
   border: 4px solid black;
   display: flex;
@@ -134,9 +146,32 @@ header > h2 {
   font-size: 1.2em;
   outline: none;
   border: 0;
-  padding: 8px;
+  padding: 8px 12px;
   background: hsl(44, 100%, 59%);
 }
 .add-todo input[type="text"]::placeholder {
   color: rgb(0, 0, 0, 0.5);
+}
+
+article {
+  margin: 4em 0;
+}
+
+footer {
+  border: 4px solid black;
+  font-size: 0.8em;
+  font-weight: 900;
+  padding: 8px;
+  background: #ddd;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4em;
+}
+
+footer a[href] {
+  background: transparent;
+}
+
+p {
+  line-height: 1.6;
 }

@@ -5,21 +5,17 @@ const layout = await include("fragments/layout");
 const todoList = await include("fragments/todoList");
 const todoItem = await include("fragments/todoItem");
 const todoItemEdit = await include("fragments/todoItemEdit");
+const thesis = await include("fragments/thesis");
 
 function button() {
   return html`<button hx-post="/click" hx-swap="outerHTML">${count}</button>`;
 }
 
 app.get("/", async () => {
+  console.log("wow this works?");
   return layout({
     title: "Todo List",
-    children: html`
-      <header>
-        <h1>Client-Side HATEOAS</h1>
-        <h2>HTMX + Service Workers</h2>
-      </header>
-      ${todoList(todos.getAll())}
-    `,
+    children: html` ${todoList(todos.getAll())} ${thesis()} `,
   });
 });
 
@@ -39,7 +35,7 @@ app.put("/todos/:id", async (req) => {
   if (body.task !== undefined) delta.task = body.task;
 
   const todo = todos.update(id, delta);
-  console.log(todo, todos.getAll());
+  if (!todo) return new Response(null, { status: 404 });
 
   return todoItem(todo);
 });

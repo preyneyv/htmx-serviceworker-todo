@@ -2,15 +2,8 @@ self.addEventListener("install", function (event) {
   self.skipWaiting();
   event.waitUntil(
     (async () => {
+      await caches.delete("cache");
       await include("index");
-
-      // // Cache required files for offline use
-      // const cache = await caches.open("cache");
-      // await cache.addAll(include.webCache);
-
-      for (const client of await self.clients.matchAll()) {
-        client.postMessage("ready");
-      }
     })()
   );
 });
@@ -18,33 +11,22 @@ self.addEventListener("install", function (event) {
 self.addEventListener("activate", function (event) {
   event.waitUntil(
     (async () => {
-      await self.clients.claim();
       await include("index");
-
-      for (const client of await self.clients.matchAll()) {
-        client.postMessage("ready");
-      }
+      await self.clients.claim();
     })()
   );
 });
 
 self.addEventListener("fetch", (event) => {
-  // // Offline cache handler
-  // if (include.webCache.find((r) => r.url === event.request.url)) {
-  //   event.respondWith(
-  //     (async () => {
-  //       const match = await caches.match(event.request);
-  //       if (match) {
-  //         return match;
-  //       }
-  //       const res = await fetch(event.request);
-  //       const cache = await caches.open("cache");
-  //       cache.put(e.request, res.clone());
-  //       return res;
-  //     })()
-  //   );
-  //   return;
-  // }
+  // Offline cache handler
+  if (
+    include.webCache.find((r) => r.url === event.request.url) ||
+    event.request.url.startsWith("https://fonts.googleapis.com") ||
+    event.request.url.startsWith("https://fonts.gstatic.com")
+  ) {
+    event.respondWith(include.cachedFetch(event.request));
+    return;
+  }
 
   const appModule = include.moduleCache["/sw/app.js"];
   if (!appModule) return;
@@ -66,11 +48,11 @@ async function include() {
   if (include.moduleCache[arguments[0]])
     return include.moduleCache[arguments[0]].exports;
 
-  // Evaluate the script in an async scope (for top level awaits :D)
+  // Evaluate the script in an async scope (for top level awaits and var scoping :D)
   await eval(
-    `;(async()=>{${await fetch(arguments[0]).then((response) =>
-      response.text()
-    )}})();`
+    `;(async()=>{${await include
+      .cachedFetch(arguments[0])
+      .then((response) => response.text())}})();`
   );
 
   // Cache the module for future use
@@ -80,12 +62,20 @@ async function include() {
 }
 
 include.moduleCache = {};
-include("index").then(async () => {
-  for (const client of await self.clients.matchAll()) {
-    client.postMessage("ready");
-  }
-});
-// include.webCache = [
-//   new Request("https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"),
-//   // new Request("https://cdn.tailwindcss.com/3.4.1", { mode: "no-cors" }),
-// ];
+include.cachedFetch =
+  /**
+   * @param {RequestInfo} req
+   */
+  async (req) => {
+    const cache = await caches.open("cache");
+    const match = await cache.match(req);
+    if (match) return match;
+    const res = await fetch(req);
+    cache.put(req, res.clone());
+    return res;
+  };
+include.webCache = [
+  new Request("https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"),
+  new Request("/styles.css"),
+];
+include("index");
