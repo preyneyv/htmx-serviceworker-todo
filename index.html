@@ -10,12 +10,12 @@
         })
         .then((registration) => {
           if (registration.active) {
-            // location.reload();
+            location.reload();
           }
           if (registration.installing) {
             registration.installing.addEventListener("statechange", (e) => {
               if (e.target.state === "activated") {
-                // location.reload();
+                location.reload();
               }
             });
           }
