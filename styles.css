@@ -108,6 +108,7 @@ header > h2 {
   height: 100%;
   outline: none;
   font: inherit;
+  letter-spacing: inherit;
   border: 0;
   padding: 0;
   margin: 0;
@@ -139,6 +140,7 @@ header > h2 {
 .add-todo input[type="text"] {
   flex: 1 1 auto;
   font: inherit;
+  letter-spacing: -0.1em;
   height: 32px;
   background: 0;
   font-size: 1.2em;

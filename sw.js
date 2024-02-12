@@ -3,7 +3,7 @@ self.addEventListener("install", function (event) {
   event.waitUntil(
     (async () => {
       await caches.delete("cache");
-      await include("index");
+      // await include("index");
     })()
   );
 });
