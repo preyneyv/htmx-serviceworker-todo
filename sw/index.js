@@ -13,7 +13,13 @@ function button() {
 app.get("/", async () => {
   return layout({
     title: "Todo List",
-    children: html`${todoList(todos.getAll())}`,
+    children: html`
+      <header>
+        <h1>Client-Side HATEOAS</h1>
+        <h2>HTMX + Service Workers</h2>
+      </header>
+      ${todoList(todos.getAll())}
+    `,
   });
 });
 
@@ -40,13 +46,15 @@ app.put("/todos/:id", async (req) => {
 
 app.get("/todos/:id/edit", async (req) => {
   const { id } = req.params;
+  const todo = todos.get(id);
+  if (!todo) return new Response(null, { status: 404 });
+
   return todoItemEdit(todos.get(id));
-  // return "WOW";
 });
 
 app.delete("/todos/:id", async (req) => {
   const { id } = req.params;
   const deletedTodo = Boolean(todos.delete(id));
-  if (deletedTodo === null) return new Response(undefined, { status: 404 });
+  if (deletedTodo === null) return new Response(null, { status: 404 });
   return html``;
 });

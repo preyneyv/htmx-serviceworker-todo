@@ -1,0 +1,142 @@
+@import url("https://fonts.googleapis.com/css2?family=Climate+Crisis&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@400;900&display=swap");
+
+body {
+  /* background: hsl(199, 100%, 59%); */
+  animation: 2s test linear infinite;
+  font-family: "Lexend Mega", sans-serif;
+  margin: 0;
+  padding: 4em 0;
+}
+
+main {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+header {
+  /* font-family: "Climate Crisis", sans-serif; */
+  background: white;
+  border: 4px solid black;
+  /* border-top: 6px solid hsl(266, 100%, 59%);
+  border-left: 6px solid hsl(266, 100%, 59%);
+  box-shadow: 9px 9px 0 3px white; */
+  padding: 8px 8px 4px;
+  /* padding: 8px 8px 0; */
+  margin-bottom: 3em;
+}
+header > h1 {
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 60px;
+  margin: 0 -2px;
+  line-height: 0.8;
+  letter-spacing: -0.1em;
+}
+
+header > h2 {
+  margin: 0 2px;
+  /* font-weight: 700; */
+}
+
+.todo-container h1 {
+  margin: 0 0 4px;
+  font-weight: 900;
+  font-size: 1.5em;
+}
+
+.todos > div {
+  --accent: #ddd;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  margin-bottom: 1em;
+  box-shadow: 0 6px var(--accent);
+  border: 4px solid black;
+  padding: 8px;
+  position: relative;
+}
+
+.todos > div.completed {
+  --accent: hsl(44, 100%, 59%);
+}
+.todos .checkbox input[type="checkbox"] {
+  display: none;
+}
+.todos .checkbox .checkbox-standin {
+  height: 32px;
+  aspect-ratio: 1;
+  /* width: 8px; */
+  border-radius: 0;
+  margin: 0;
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.todos > div > h3 {
+  margin: 0;
+  font-weight: 400;
+  font-size: 20px;
+  flex: 1 1 auto;
+  position: relative;
+}
+.todos > div > h3 span {
+  position: relative;
+}
+
+.todos > div.completed h3 span::after {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  font-weight: bold;
+  opacity: 0.2;
+  letter-spacing: -0.4em;
+  content: "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+}
+
+.todos > div h3 input {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  font: inherit;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.todos > div > button {
+  height: 32px;
+  aspect-ratio: 1;
+  font: inherit;
+  border: 0;
+  background: #ddd;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.todos > div > button:hover {
+  background: hsl(17, 100%, 59%);
+}
+
+.add-todo form {
+  border: 4px solid black;
+  display: flex;
+}
+
+.add-todo input[type="text"] {
+  flex: 1 1 auto;
+  font: inherit;
+  height: 32px;
+  background: 0;
+  font-size: 1.2em;
+  outline: none;
+  border: 0;
+  padding: 8px;
+  background: hsl(44, 100%, 59%);
+}
+.add-todo input[type="text"]::placeholder {
+  color: rgb(0, 0, 0, 0.5);
+}

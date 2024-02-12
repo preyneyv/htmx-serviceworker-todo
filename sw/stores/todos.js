@@ -10,19 +10,19 @@ class TodoStore {
     /** @type {Todo[]} */
     this.todos = [
       {
-        completed: false,
+        completed: true,
         id: self.crypto.randomUUID(),
-        task: "Learn about HTMX",
+        task: "Learn HTMX",
+      },
+      {
+        completed: true,
+        id: self.crypto.randomUUID(),
+        task: "Build a Worker-based HTTP router",
       },
       {
         completed: false,
         id: self.crypto.randomUUID(),
-        task: "Learn about Service Workers",
-      },
-      {
-        completed: false,
-        id: self.crypto.randomUUID(),
-        task: "Make an extremely cursed demo",
+        task: "Make an antithetical demo",
       },
     ];
   }
