@@ -14,7 +14,7 @@ function button() {
 app.get("/", async () => {
   console.log("wow this works?");
   return layout({
-    title: "Todo List",
+    title: "HATEOAS but Client-Side and Offline",
     children: html` ${todoList(todos.getAll())} ${thesis()} `,
   });
 });
